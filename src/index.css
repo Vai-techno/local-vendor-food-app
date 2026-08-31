@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #f9f9f9;
+  --color-surface-dim: #dadada;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: #eeeeee;
+  --color-surface-variant: #e2e2e2;
+  --color-on-surface: #1a1c1c;
+  --color-on-surface-variant: #594139;
+  
+  --color-primary: #ab3500;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ff6b35;
+  --color-on-primary-container: #5f1900;
+  
+  --color-secondary: #27657c;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #a8e2fd;
+  --color-on-secondary-container: #28667d;
+  
+  --color-background: #f9f9f9;
+  --color-on-background: #1a1c1c;
+  --color-outline-variant: #e1bfb5;
+
+  --font-display: 'Montserrat', sans-serif;
+  --font-headline-lg: 'Montserrat', sans-serif;
+  --font-headline-md: 'Montserrat', sans-serif;
+  --font-headline-sm: 'Montserrat', sans-serif;
+  --font-body-lg: 'Inter', sans-serif;
+  --font-body-md: 'Inter', sans-serif;
+  --font-body-sm: 'Inter', sans-serif;
+  --font-label-bold: 'Inter', sans-serif;
+  --font-label-sm: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-body-md;
+  }
+}
+

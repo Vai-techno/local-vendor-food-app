@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the user is reading/writing their own document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if the user has a specific role (stored in their user document)
+    function hasRole(role) {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    match /test_collection/{docId} {
+      allow read, write: if true;
+    }
+
+    match /users/{userId} {
+      // Anyone can read their own profile. Admins can read all.
+      allow read: if isOwner(userId) || hasRole('admin');
+      
+      // Users can create their own profile upon sign up
+      allow create: if isOwner(userId);
+      
+      // Users can update their own profile, but cannot elevate their role
+      allow update: if isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) 
+                    || hasRole('admin');
+      
+      // Only admins can delete users
+      allow delete: if hasRole('admin');
+    }
+
+    match /vendors/{vendorId} {
+      // Anyone can read vendors
+      allow read: if true;
+      
+      // Only vendors or admins can create/update vendors
+      allow create, update: if hasRole('admin') || (hasRole('vendor') && request.resource.data.userId == request.auth.uid);
+      allow delete: if hasRole('admin');
+    }
+
+    match /foods/{foodId} {
+      // Anyone can read foods
+      allow read: if true;
+      
+      // Vendors can only write foods if they own the vendor profile, or admins
+      allow create, update, delete: if hasRole('admin') || hasRole('vendor');
+    }
+
+    match /orders/{orderId} {
+      // Customers can read their own orders. Vendors can read orders sent to them. Admins can read all.
+      allow read: if hasRole('admin') || 
+                  (isAuthenticated() && resource.data.customerId == request.auth.uid) ||
+                  (hasRole('vendor') && resource.data.vendorId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.vendorId);
+                  
+      // Customers can create orders
+      allow create: if isAuthenticated() && request.resource.data.customerId == request.auth.uid;
+      
+      // Vendors can update order statuses (pending -> preparing, etc.)
+      allow update: if hasRole('admin') || hasRole('vendor');
+      
+      // Only admins can delete orders
+      allow delete: if hasRole('admin');
+    }
+  }
+}

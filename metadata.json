@@ -1,0 +1,6 @@
+{
+  "name": "LocalBite",
+  "description": "A production-ready, modern Local Food Marketplace platform connecting customers with local restaurants and chefs.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

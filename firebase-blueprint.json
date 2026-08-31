@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the platform (customer, vendor, or admin).",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "vendor", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "Vendor": {
+      "title": "Vendor",
+      "description": "Vendor profile details.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "cuisine": { "type": "string" },
+        "rating": { "type": "number" },
+        "deliveryTime": { "type": "string" },
+        "distance": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["userId", "businessName"]
+    },
+    "Food": {
+      "title": "Food",
+      "description": "Menu items offered by vendors.",
+      "type": "object",
+      "properties": {
+        "vendorId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "category": { "type": "string" },
+        "isVeg": { "type": "boolean" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["vendorId", "name", "price"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "vendorId": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "preparing", "ready", "delivered"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "vendorId", "totalAmount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles, keyed by Firebase Auth UID."
+    },
+    "/vendors/{vendorId}": {
+      "schema": { "$ref": "#/entities/Vendor" },
+      "description": "Vendor profiles."
+    },
+    "/foods/{foodId}": {
+      "schema": { "$ref": "#/entities/Food" },
+      "description": "Menu items."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer orders."
+    }
+  }
+}
